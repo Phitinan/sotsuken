@@ -2,6 +2,7 @@ import useField from "../hooks/useField";
 import useLogin from "../hooks/useLogin";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 const Login = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const Login = ({ setIsAuthenticated }) => {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const res = await fetch("http://localhost:4000/api/goog/google-login", {
+      const res = await fetch(`${API_BASE}/api/goog/google-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: credentialResponse.credential }),

@@ -7,6 +7,7 @@ import useSubtypeLibrary from "../hooks/useSubtypes";
 import useSpotReview from "../hooks/useSpotReview";
 import useSeasonReports from "../hooks/useReports";
 import CreatableSelect from "react-select/creatable";
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 // Import Custom Hooks
 import useMap from "../hooks/useMap";
@@ -116,7 +117,7 @@ export default function MapPage() {
     useEffect(() => {
         const loadSpots = async () => {
             try {
-                const { data } = await axios.get("http://localhost:4000/api/spots");
+                const { data } = await axios.get(`${API_BASE}/api/spots`);
                 setSpots(data);
             } catch (err) {
                 console.error("Failed to load spots:", err);
@@ -674,7 +675,7 @@ export default function MapPage() {
                                 const spotWithPhotos = {
                                     ...createdSpot,
                                     photos: uploadedPhotos?.map(p => ({
-                                        url: p.url || `http://localhost:4000/uploads/${p.filename}` // fallback
+                                        url: p.url || `${API_BASE}/uploads/${p.filename}` // fallback
                                     })) || []
                                 };
                                 setSpots(prev => [...prev, spotWithPhotos]);

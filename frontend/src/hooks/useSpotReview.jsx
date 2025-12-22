@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function useSpotReview(token) {
   const [reviews, setReviews] = useState([]);
@@ -30,7 +31,7 @@ export default function useSpotReview(token) {
 
     try {
       const res = await axios.get(
-        `http://localhost:4000/api/spots/${spotId}/reviews`
+        `${API_BASE}/api/spots/${spotId}/reviews`
       );
 
       setReviews(res.data.reviews || []);
@@ -53,7 +54,7 @@ export default function useSpotReview(token) {
 
     try {
       const res = await axios.post(
-        `http://localhost:4000/api/spots/${spotId}/reviews`,
+        `${API_BASE}/api/spots/${spotId}/reviews`,
         {
           rating: userReview.rating,
           comment: userReview.comment
@@ -86,7 +87,7 @@ export default function useSpotReview(token) {
 
     try {
       const res = await axios.put(
-        `http://localhost:4000/api/spots/${spotId}/reviews/${reviewId}`,
+        `${API_BASE}/api/spots/${spotId}/reviews/${reviewId}`,
         { rating, comment },
         {
           headers: {
@@ -113,7 +114,7 @@ export default function useSpotReview(token) {
 
     try {
       const res = await axios.delete(
-        `http://localhost:4000/api/spots/${spotId}/reviews/${reviewId}`,
+        `${API_BASE}/api/spots/${spotId}/reviews/${reviewId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`

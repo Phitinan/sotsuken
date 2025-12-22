@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import axios from "axios";
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function useSeasonReports(token) {
     const [seasonReports, setSeasonReports] = useState([]);
@@ -18,7 +19,7 @@ export default function useSeasonReports(token) {
 
         try {
             const res = await axios.get(
-                `http://localhost:4000/api/spots/${spotId}/season-reports`
+                `${API_BASE}/api/spots/${spotId}/season-reports`
             );
             
             setSeasonReports(res.data.seasonReports || []);
@@ -38,7 +39,7 @@ export default function useSeasonReports(token) {
 
         try {
             const res = await axios.post(
-                `http://localhost:4000/api/spots/${spotId}/season-reports`,
+                `${API_BASE}/api/spots/${spotId}/season-reports`,
                 payload,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -58,7 +59,7 @@ export default function useSeasonReports(token) {
 
         try {
             const res = await axios.put(
-                `http://localhost:4000/api/spots/${spotId}/season-reports/${reportId}`,
+                `${API_BASE}/api/spots/${spotId}/season-reports/${reportId}`,
                 payload,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -78,7 +79,7 @@ export default function useSeasonReports(token) {
 
         try {
             const res = await axios.delete(
-                `http://localhost:4000/api/spots/${spotId}/season-reports/${reportId}`,
+                `${API_BASE}/api/spots/${spotId}/season-reports/${reportId}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 

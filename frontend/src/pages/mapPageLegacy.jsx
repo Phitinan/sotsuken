@@ -7,7 +7,7 @@ import useAddSpot from "../hooks/useAddSpot";
 import { useUploadPhotos } from "../hooks/useUpload";
 import useSubtypeLibrary from "../hooks/useSubtypes";
 import CreatableSelect from "react-select/creatable";
-
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function MapPage() {
   const mapContainer = useRef(null);
@@ -95,7 +95,7 @@ export default function MapPage() {
   useEffect(() => {
     const loadSpots = async () => {
       try {
-        const { data } = await axios.get("http://localhost:4000/api/spots");
+        const { data } = await axios.get("/api/spots");
         setSpots(data);
       } catch (err) {
         console.error("Failed to load spots:", err);
@@ -115,7 +115,7 @@ export default function MapPage() {
   }, []);
 
   useEffect(() => {
-    axios.get("http://localhost:4000/api/hanabi")
+    axios.get("/api/hanabi")
       .then(res => setHanabiEvents(res.data))
       .catch(err => console.error("Failed to load hanabi events:", err));
   }, []);

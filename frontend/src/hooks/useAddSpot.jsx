@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function useAddSpot(token) {
     const [adding, setAdding] = useState(false);
@@ -75,7 +76,7 @@ export default function useAddSpot(token) {
 
         try {
             const { data } = await axios.post(
-                "http://localhost:4000/api/spots",
+                `${API_BASE}/api/spots`,
                 {
                     ...formData,
                     location: {

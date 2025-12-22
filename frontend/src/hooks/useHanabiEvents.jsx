@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import maplibregl from "maplibre-gl";
 import axios from "axios";
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function useHanabiEvents(mapRef, filter, selectedHanabi, setSelectedHanabi, markerIcon) {
   const [hanabiEvents, setHanabiEvents] = useState([]);
@@ -8,7 +9,7 @@ export default function useHanabiEvents(mapRef, filter, selectedHanabi, setSelec
 
   // Load Data
   useEffect(() => {
-    axios.get("http://localhost:4000/api/hanabi")
+    axios.get(`${API_BASE}/api/hanabi`)
       .then(res => setHanabiEvents(res.data))
       .catch(err => console.error("Failed to load hanabi events:", err));
   }, []);

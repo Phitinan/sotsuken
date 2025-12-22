@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import axios from "axios";
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function useSubtypeLibrary() {
   const [subtypeLibrary, setSubtypeLibrary] = useState({});
@@ -8,7 +9,7 @@ export default function useSubtypeLibrary() {
   const loadSubtypes = useCallback(async (type) => {
     if (!type) return;
 
-    const res = await axios.get(`http://localhost:4000/api/subtypes/${type}`);
+    const res = await axios.get(`${API_BASE}/api/subtypes/${type}`);
 
     setSubtypeLibrary((prev) => ({
       ...prev,
@@ -21,7 +22,7 @@ export default function useSubtypeLibrary() {
     async (type, newSubtype) => {
       if (!type || !newSubtype) return;
 
-      await axios.post("http://localhost:4000/api/subtypes", {
+      await axios.post(`${API_BASE}/api/subtypes`, {
         type,
         name: newSubtype,
       });

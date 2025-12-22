@@ -10,8 +10,9 @@ const __dirname = path.dirname(__filename);
 const filePath = path.join(__dirname, "../data/hanabi.json");
 const raw = fs.readFileSync(filePath, "utf8");
 const hanabiData = JSON.parse(raw);
+const API_BASE = import.meta.env.VITE_API_BASE;
 
-const API_URL = "http://localhost:4000/api/hanabi";
+const API_URL = `${API_BASE}/api/hanabi`;
 
 async function seed() {
   console.log("Seeding hanabi...");

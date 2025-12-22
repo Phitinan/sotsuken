@@ -1,4 +1,5 @@
 import { useState } from "react";
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export const useUploadPhotos = () => {
   const [loading, setLoading] = useState(false);
@@ -12,7 +13,7 @@ export const useUploadPhotos = () => {
       const formData = new FormData();
       Array.from(files).forEach(file => formData.append("photos", file));
 
-      const response = await fetch(`http://localhost:4000/api/spots/${spotId}/photos`, {
+      const response = await fetch(`${API_BASE}/api/spots/${spotId}/photos`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
