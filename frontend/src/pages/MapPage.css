@@ -1,0 +1,760 @@
+.map-page-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
+
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.map-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: visible;
+}
+
+
+.spot-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.season-chip {
+  text-decoration: underline;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: none;
+  color: #000;
+}
+
+.season-chip:hover {
+  background-color: #1f1f1f;
+  color: #e1e1e1
+}
+
+.full-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.5);
+  /* opaque */
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.full-overlay-content {
+  background: rgba(0, 0, 0, 0.9);
+  /* opaque */
+  width: 100%;
+  max-width: 520px;
+  height: 100vh;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.season-sheet-header {
+  padding: 16px;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.season-sheet-header h3 {
+  color: #1f1f1f;
+}
+
+/* Scrollable list */
+.season-sheet-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+/* Individual report */
+.season-report {
+  padding: 12px;
+  border-radius: 8px;
+  background: #373737;
+  margin-bottom: 12px;
+}
+
+/* Fixed add section */
+.season-sheet-footer {
+  border-top: 1px solid #e5e5e5;
+  padding: 12px 16px;
+}
+
+.season-sheet-footer {
+  color: #242424;
+}
+
+/* Status pill example */
+.status {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+
+
+
+.bottom-info-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #2b2b2b;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.4);
+  color: #eee;
+  z-index: 30;
+  transition: height 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.panel-content {
+  overflow-y: auto;
+  padding: 12px 20px 24px;
+  flex: 1;
+}
+
+.bottom-info-panel.half {
+  height: 40vh;
+}
+
+.bottom-info-panel.full {
+  height: 75vh;
+}
+
+.panel-handle {
+  width: 40px;
+  height: 4px;
+  background: #666;
+  border-radius: 999px;
+  margin: 8px auto;
+  cursor: grab;
+}
+
+
+
+.photo-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.spot-photo {
+  width: 100%;
+  max-width: 140px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.spot-photo:hover {
+  transform: scale(1.05);
+}
+
+.no-photos {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.carousel-container {
+  width: 100%;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.carousel-wrapper {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 10px;
+}
+
+.carousel-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.carousel-image {
+  scroll-snap-align: center;
+  height: 140px;
+  width: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.carousel-image:hover {
+  transform: scale(1.04);
+}
+
+.carousel-indicators {
+  text-align: center;
+  margin-top: 6px;
+}
+
+.dot {
+  height: 7px;
+  width: 7px;
+  margin: 0 3px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  opacity: 0.5;
+}
+
+/* Sliding animation */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.bottom-info-panel h2,
+.bottom-info-panel h3 {
+  margin-bottom: 6px;
+  color: #f0f0f0;
+}
+
+.bottom-info-panel p,
+span {
+  opacity: 0.85;
+  margin-bottom: 6px;
+}
+
+
+.days-list {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 5px;
+  flex-wrap: nowrap;
+}
+
+.date {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  background: #2b2b2b;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.date.open {
+  background: #1f7a3f;
+  border: 1px solid #1f7a3f;
+}
+
+.date.closed {
+  background: #8b2c2c;
+  border: 1px solid #8b2c2c;
+}
+
+.break {
+  flex-basis: 100%;
+  height: 0;
+}
+
+
+/* ----------------- Filter Bar Positioning (NEW WRAPPER) ----------------- */
+.filter-bar-wrapper {
+  /* This wrapper holds the entire filter control and positions it */
+  position: absolute;
+  top: 72px;
+  left: 20px;
+  z-index: 15;
+}
+
+.filter-bar.closed {
+  display: none;
+}
+
+/* ----------------- Filter Bar Desktop (REVISED) ----------------- */
+.filter-bar {
+  /* Make the filter bar itself display horizontally by default */
+  background: rgba(50, 50, 50, 0.85);
+  border: 1px solid #777;
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  gap: 10px;
+  backdrop-filter: blur(4px);
+}
+
+.filter-toggle {
+  display: none;
+  /* Hidden on large screens */
+}
+
+.flyto-container {
+  display: flex;
+  gap: 8px;
+  /* space between input and buttons */
+  align-items: center;
+  /* vertically center items */
+}
+
+.flyto-container input {
+  flex: 1;
+  /* input takes remaining space */
+  padding: 6px 8px;
+  color: #242424;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 80%;
+}
+
+.flyto-container button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  background-color: #1976d2;
+  color: white;
+  cursor: pointer;
+}
+
+.flyto-container button:hover {
+  background-color: #125ea5;
+}
+
+
+
+.railway-popup-content {
+  color: black;
+  min-width: 160px;
+  font-family: sans-serif;
+}
+
+.railway-popup-title {
+  margin: 0 0 8px 0;
+  color: #8c1d1d;
+  border-bottom: 2px solid #8c1d1d;
+  padding-bottom: 4px;
+}
+
+.railway-popup-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.railway-popup-item {
+  border-bottom: 1px solid #eee;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.railway-popup-item:hover {
+  background: #f5f5f5;
+}
+
+.railway-popup-item:last-child {
+  border-bottom: none;
+}
+
+.railway-popup-name {
+  color: #333;
+  font-size: 0.8rem;
+}
+
+.railway-popup-operator {
+  font-size: 0.85em;
+  color: #666;
+}
+
+.maplibregl-popup-content,
+.maplibregl-popup-content strong,
+.maplibregl-popup-content a {
+  color: #393939;
+}
+
+.add-spot-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-height: 60vh;
+  background: #383838;
+  border-top: 3px solid #007bff;
+  border-radius: 16px 16px 0 0;
+  padding: 20px;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  color: #545353;
+  animation: slideUp 0.25s ease-out;
+  z-index: 500;
+}
+
+.add-spot-panel h2 {
+  margin: 0 0 8px;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.add-spot-panel h3 {
+  margin: 18px 0 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.input,
+.textarea,
+.select,
+.input-file {
+  width: 100%;
+  padding: 10px;
+  margin: 12px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+
+.choice {
+  max-width: 100%;
+  padding: 10px;
+  margin: 12px 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  color: #545353;
+}
+
+.choice.active {
+  background: #353535;
+  color: white;
+  border-color: #dedede;
+}
+
+
+.input,
+.textarea,
+.textarea option,
+.select {
+  color: #545353;
+}
+
+.CreatableSelect {
+  margin: 12px 0;
+
+  border-radius: 8px;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background: #eeeeee;
+  color: rgb(53, 53, 53);
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.coords-display {
+  font-size: 0.9rem;
+  color: #d0cfcf;
+}
+
+.close-btn {
+  position: absolute;
+  top: 4px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  color: #cfcfcf;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.close-btn:hover {
+  color: #ffffff;
+}
+
+.optional-section {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #242424;
+  border: 1px solid #3a3a3a;
+}
+
+.optional-toggle {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 10px;
+  background: #1f1f1f;
+  color: #e0e0e0;
+  border: 1px dashed #4a4a4a;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.optional-toggle:hover {
+  background: #2a2a2a;
+  border-color: #dedede;
+}
+
+.days-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 8px 0 14px;
+}
+
+.days-checkboxes label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: #d6d6d6;
+}
+
+.segmented {
+  margin: 14px 0;
+}
+
+.segmented b {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #ffffff;
+}
+
+.choice {
+  background: #2b2b2b;
+  color: #dedede;
+  transition: all 0.15s ease;
+}
+
+.choice:hover {
+  background: #3a3a3a;
+}
+
+.choice.active {
+  background: #dedede;
+  color: #3a3a3a;
+  border-color: #dedede;
+}
+
+.submit-btn {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+
+
+
+
+/* ----------------- Desktop first ----------------- */
+@media (min-width: 900px) {
+  .filter-bar {
+    display: flex;
+    flex-direction: row;
+    background: rgba(50, 50, 50, 0.85);
+    border: 1px solid #777;
+    border-radius: 6px;
+    padding: 8px 12px;
+    gap: 10px;
+    backdrop-filter: blur(4px);
+  }
+
+  .filter-toggle {
+    display: none;
+  }
+}
+
+/* ----------------- Mobile overrides come last ----------------- */
+@media (max-width: 900px) {
+  .filter-toggle {
+    display: block;
+    background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+    border: 1px solid #666;
+    color: #eee;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: 500;
+    border-radius: 6px;
+    margin-bottom: 5px;
+  }
+
+  .filter-bar {
+    display: none;
+    flex-direction: column;
+    padding: 10px;
+    border-radius: 6px;
+    width: 200px;
+  }
+
+  .filter-bar.open {
+    display: flex;
+    position: absolute;
+    top: 45px;
+    left: 0;
+    background: rgba(40, 40, 40, 0.95);
+    border: 1px solid #777;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+  }
+}
+
+.filter-bar button.special {
+  background: linear-gradient(145deg, #747474, #616161);
+
+}
+
+
+.reviews-section {
+  margin-top: 16px;
+}
+
+.reviews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.reviews-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #eee;
+}
+
+.add-review-btn {
+  background: #dfdfdf;
+  color: #303030;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+
+
+.reviews-carousel {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.reviews-carousel::-webkit-scrollbar {
+  height: 6px;
+}
+
+.reviews-carousel::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 3px;
+}
+
+.review-card {
+  min-width: 140px;
+  background: #3a3a3a;
+  border-radius: 12px;
+  padding: 12px;
+  color: #eee;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.review-rating {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.review-comment {
+  font-size: 0.85rem;
+  line-height: 1.2rem;
+  word-break: break-word;
+}
+
+.no-reviews {
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.add-review-form {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.submit-review-btn {
+  align-self: flex-end;
+  background: #dfdfdf;
+  color: #303030;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.upload-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; 
+}
+
+.upload-popup {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
