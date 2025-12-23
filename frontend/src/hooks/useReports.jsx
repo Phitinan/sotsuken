@@ -36,6 +36,7 @@ export default function useSeasonReports(token) {
     ----------------------------- */
     const addSeasonReport = async (spotId, payload) => {
         if (!token) throw new Error("Authentication required");
+        console.log(token);
 
         try {
             const res = await axios.post(
