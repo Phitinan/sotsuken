@@ -7,6 +7,7 @@ import photoRouter from './routes/photoRouter.js';
 import hanabiRouter from "./routes/hanabiRouter.js";
 import userReportRouter from "./routes/userReportRouter.js";
 import googleRouter from "./routes/googleRouter.js";
+import railwayRouter from "./routes/railwayRouter.js";
 import { unknownEndpoint, errorHandler } from './middleware/customMiddleware.js';
 import connectDB from './config/db.js';
 import cors from 'cors';
@@ -27,6 +28,7 @@ app.use("/api/subtypes", subtypeRouter);
 app.use("/api/goog", googleRouter);
 app.use("/api/users", userRouter);
 app.use("/api/hanabi", hanabiRouter);
+app.use("/api", railwayRouter);
 
 
 app.use(unknownEndpoint);

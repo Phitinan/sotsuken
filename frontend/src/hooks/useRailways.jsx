@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import maplibregl from "maplibre-gl";
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function useRailways(mapRef, filter, setFilter, addingRef) {
   const [railData, setRailData] = useState(null);
@@ -7,7 +8,7 @@ export default function useRailways(mapRef, filter, setFilter, addingRef) {
 
   // 1. Fetch Data
   useEffect(() => {
-    fetch("/railway_lines.geojson")
+    fetch(`${API_BASE}/api/railway-lines`)
       .then(r => r.json())
       .then(setRailData)
       .catch(err => console.error("Failed to load rail data", err));
