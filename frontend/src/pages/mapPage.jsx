@@ -54,7 +54,10 @@ export default function MapPage() {
 
     const { uploadPhotos } = useUploadPhotos();
     const { subtypeLibrary, loadSubtypes, createSubtype } = useSubtypeLibrary();
-    const token = JSON.parse(localStorage.getItem("user"))?.token;
+    const storedUser = localStorage.getItem("user");
+    const token = storedUser ? JSON.parse(storedUser).token : null;
+
+
     const {
         reviews, userReview, setUserReview,
         ratingSummary,
