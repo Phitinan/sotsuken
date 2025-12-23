@@ -21,7 +21,9 @@ app.use(express.json());
 
 connectDB();
 
+
 app.use("/api", userReportRouter);
+app.use("/api/railwaylines", railwayRouter);
 app.use("/api/spots", spotRouter);
 app.use("/api/spots", photoRouter);
 app.use("/api/subtypes", subtypeRouter);
