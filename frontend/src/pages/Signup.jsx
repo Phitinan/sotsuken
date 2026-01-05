@@ -13,12 +13,9 @@ const Signup = ({ setIsAuthenticated }) => {
   const name = useField("name");
   const email = useField("email");
   const password = useField("password");
-  const role = useField("role"); // optional, default 'user'
-  const profile_pic = useField("profile_pic"); // optional URL
+  const role = useField("role");
+  const profile_pic = useField("profile_pic"); 
   const { value, onChange } = name;
-  const emailField = useField("email");
-  const passwordField = useField("password");
-  const getInputProps = ({ setValue, ...rest }) => rest;
 
   const { signup, error } = useSignup(`${API_BASE}/api/users/signup`);
   const handleGoogleSuccess = async (credentialResponse) => {
@@ -68,10 +65,10 @@ const Signup = ({ setIsAuthenticated }) => {
         <input value={value} onChange={onChange} className="dark-input" />
 
         <label>メールアドレス:</label>
-        <input {...getInputProps(emailField)} className="dark-input" />
+        <input {...email} className="dark-input" />
 
         <label>パスワード:</label>
-        <input type="password" {...getInputProps(passwordField)} className="dark-input" />
+        <input type="password" {...password} className="dark-input" />
 
         <button type="submit" className="dark-button">Sign Up</button>
       </form>

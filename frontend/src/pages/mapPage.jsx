@@ -44,13 +44,6 @@ export default function MapPage() {
         hanabiEvent: "https://res.cloudinary.com/dz2xri489/image/upload/v1765306226/ha_vjjb59.png",
         hanabiRed: "https://res.cloudinary.com/dz2xri489/image/upload/v1765312141/Image_8_h9s3mw.png"
     };
-    const focalLengthMap = {
-        "超広角": "ultra_wide",
-        "広角": "wide",
-        "標準": "standard",
-        "望遠": "telephoto",
-        "超望遠": "super_telephoto"
-    };
 
     const { uploadPhotos } = useUploadPhotos();
     const { subtypeLibrary, loadSubtypes, createSubtype } = useSubtypeLibrary();
