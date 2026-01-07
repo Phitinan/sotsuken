@@ -47,7 +47,6 @@ const Signup = ({ setIsAuthenticated }) => {
       email: email.value,
       password: password.value,
       role: role.value || "user",
-      profile_pic: profile_pic.value || "",
     });
 
     if (!error) {

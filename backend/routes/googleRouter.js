@@ -7,13 +7,14 @@ dotenv.config();
 
 const router = express.Router();
 router.post("/google-login", async (req, res) => {
-    // 1. Use the hardcoded string directly for the audience check as well
+    console.log("GOOGLE LOGIN HIT");
     const GOOGLE_ID = "989853536462-l2ltklq5bf2jddsbmoug3q94hs88dicr.apps.googleusercontent.com";
     const client = new OAuth2Client(GOOGLE_ID);
 
     try {
         const { token } = req.body;
         if (!token) return res.status(400).json({ error: "No token provided" });
+        console.log("Google token received:", token?.slice(0, 30));
 
         const ticket = await client.verifyIdToken({
             idToken: token,
@@ -21,16 +22,18 @@ router.post("/google-login", async (req, res) => {
         });
 
         const payload = ticket.getPayload();
-        const { email, name, picture } = payload;
+        console.log("Google payload:", payload);
+        const { email, name } = payload;
 
         let user = await User.findOne({ email });
         if (!user) {
-            user = await User.create({ name, email, profile_pic: picture, provider: "google" });
+            user = await User.create({ name, email});
         }
 
-        const appToken = jwt.sign({ id: user._id }, process.env.SECRET, { expiresIn: "7d" });
+        const appToken = jwt.sign({ _id: user._id }, process.env.SECRET, { expiresIn: "7d" });
+        console.log(user._id);
 
-        res.json({ id: user._id, name, email, profile_pic: picture, token: appToken });
+        res.json({ id: user._id, name, email , token: appToken });
     } catch (err) {
         // 2. This log will now tell us the exact reason for the 401
         console.error("Backend Auth Error:", err.message);

@@ -67,6 +67,7 @@ export const loginUser = async (req, res) => {
       res.status(200).json({ name: user.name, email, token });
     } else {
       res.status(400);
+      console.log(user._id);
       throw new Error("Invalid credentials");
     }
   } catch (error) {
