@@ -76,7 +76,7 @@ export default function useAddSpot(token) {
 
         try {
             const { data } = await axios.post(
-                `${API_BASE}/api/spots`,
+                `/api/spots`,
                 {
                     ...formData,
                     location: {

@@ -3,32 +3,37 @@ import { useNavigate } from "react-router-dom";
 
 export default function useSignup(url) {
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const signup = async (object) => {
-    console.log(object)
     setIsLoading(true);
     setError(null);
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(object),
-    });
-    const user = await response.json();
 
-    if (!response.ok) {
-      console.log(user.error);
-      setError(user.error);
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(object),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Signup failed");
+      }
+
+      // success
+      localStorage.setItem("user", JSON.stringify(data));
+      navigate("/"); // move only on success
+      return data;
+
+    } catch (err) {
+      setError(err.message);
+      throw err; 
+    } finally {
       setIsLoading(false);
-      const confirm = window.confirm(
-      "user already exist")
-      navigate("/");
-      return error;
     }
-
-    localStorage.setItem("user", JSON.stringify(user));
-    setIsLoading(false);
   };
 
   return { signup, isLoading, error };

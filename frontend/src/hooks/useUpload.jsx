@@ -13,7 +13,7 @@ export const useUploadPhotos = () => {
       const formData = new FormData();
       Array.from(files).forEach(file => formData.append("photos", file));
 
-      const response = await fetch(`${API_BASE}/api/spots/${spotId}/photos`, {
+      const response = await fetch(`/api/spots/${spotId}/photos`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

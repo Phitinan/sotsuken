@@ -30,7 +30,6 @@ app.use("/api/subtypes", subtypeRouter);
 app.use("/api/goog", googleRouter);
 app.use("/api/users", userRouter);
 app.use("/api/hanabi", hanabiRouter);
-app.use("/api", railwayRouter);
 
 
 app.use(unknownEndpoint);

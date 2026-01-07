@@ -13,7 +13,7 @@ const Login = ({ setIsAuthenticated }) => {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const res = await fetch(`${API_BASE}/api/goog/google-login`, {
+      const res = await fetch(`/api/goog/google-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: credentialResponse.credential }),

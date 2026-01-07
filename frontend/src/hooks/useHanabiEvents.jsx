@@ -9,7 +9,7 @@ export default function useHanabiEvents(mapRef, filter, selectedHanabi, setSelec
 
   // Load Data
   useEffect(() => {
-    axios.get(`${API_BASE}/api/hanabi`)
+    axios.get(`/api/hanabi`)
       .then(res => setHanabiEvents(res.data))
       .catch(err => console.error("Failed to load hanabi events:", err));
   }, []);

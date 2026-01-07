@@ -12,7 +12,7 @@ const raw = fs.readFileSync(filePath, "utf8");
 const subtypeData = JSON.parse(raw);
 const API_BASE = import.meta.env.VITE_API_BASE;
 
-const API_URL = `${API_BASE}/api/subtypes`;
+const API_URL = `/api/subtypes`;
 
 async function seed() {
   console.log("Seeding subtypes...");

@@ -113,7 +113,7 @@ export default function MapPage() {
     useEffect(() => {
         const loadSpots = async () => {
             try {
-                const { data } = await axios.get(`${API_BASE}/api/spots`);
+                const { data } = await axios.get(`/api/spots`);
                 setSpots(data);
             } catch (err) {
                 console.error("Failed to load spots:", err);
@@ -352,11 +352,12 @@ export default function MapPage() {
                                         }
                                     >
                                         <option value="">Season status</option>
+                                        <option value={0}>季節外</option>
                                         <option value={1}>序盤</option>
                                         <option value={2}>見頃前</option>
                                         <option value={3}>見頃</option>
                                         <option value={4}>後半</option>
-                                        <option value={5}>見頃後</option>
+                                        <option value={5}>終盤</option>
                                     </select>
 
                                     <input
@@ -671,7 +672,7 @@ export default function MapPage() {
                                 const spotWithPhotos = {
                                     ...createdSpot,
                                     photos: uploadedPhotos?.map(p => ({
-                                        url: p.url || `${API_BASE}/uploads/${p.filename}` // fallback
+                                        url: p.url || `/uploads/${p.filename}` // fallback
                                     })) || []
                                 };
                                 setSpots(prev => [...prev, spotWithPhotos]);

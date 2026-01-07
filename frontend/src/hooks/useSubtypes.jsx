@@ -9,7 +9,7 @@ export default function useSubtypeLibrary() {
   const loadSubtypes = useCallback(async (type) => {
     if (!type) return;
 
-    const res = await axios.get(`${API_BASE}/api/subtypes/${type}`);
+    const res = await axios.get(`/api/subtypes/${type}`);
 
     setSubtypeLibrary((prev) => ({
       ...prev,
@@ -22,7 +22,7 @@ export default function useSubtypeLibrary() {
     async (type, newSubtype) => {
       if (!type || !newSubtype) return;
 
-      await axios.post(`${API_BASE}/api/subtypes`, {
+      await axios.post(`/api/subtypes`, {
         type,
         name: newSubtype,
       });

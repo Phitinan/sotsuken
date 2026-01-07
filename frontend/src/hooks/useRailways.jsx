@@ -8,7 +8,7 @@ export default function useRailways(mapRef, filter, setFilter, addingRef) {
 
   // 1. Fetch Data
   useEffect(() => {
-    fetch(`${API_BASE}/api/railwaylines`)
+    fetch(`/api/railwaylines`)
       .then(r => r.json())
       .then(setRailData)
       .catch(err => console.error("Failed to load rail data", err));

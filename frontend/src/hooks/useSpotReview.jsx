@@ -31,7 +31,7 @@ export default function useSpotReview(token) {
 
     try {
       const res = await axios.get(
-        `${API_BASE}/api/spots/${spotId}/reviews`
+        `/api/spots/${spotId}/reviews`
       );
 
       setReviews(res.data.reviews || []);
@@ -54,7 +54,7 @@ export default function useSpotReview(token) {
 
     try {
       const res = await axios.post(
-        `${API_BASE}/api/spots/${spotId}/reviews`,
+        `/api/spots/${spotId}/reviews`,
         {
           rating: userReview.rating,
           comment: userReview.comment
@@ -87,7 +87,7 @@ export default function useSpotReview(token) {
 
     try {
       const res = await axios.put(
-        `${API_BASE}/api/spots/${spotId}/reviews/${reviewId}`,
+        `/api/spots/${spotId}/reviews/${reviewId}`,
         { rating, comment },
         {
           headers: {
@@ -114,7 +114,7 @@ export default function useSpotReview(token) {
 
     try {
       const res = await axios.delete(
-        `${API_BASE}/api/spots/${spotId}/reviews/${reviewId}`,
+        `/api/spots/${spotId}/reviews/${reviewId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
