@@ -21,7 +21,7 @@ const EditPropertyPage = () => {
 
         try {
             console.log(newEvent)
-            const res = await fetch(`/api/events/${id}`, {
+            const res = await fetch(`${API_BASE}/api/events/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/JSON",
@@ -67,7 +67,7 @@ const EditPropertyPage = () => {
         const fetchEvent = async () => {
             try {
                 console.log("id: ", id);
-                const res = await fetch(`/api/events/${id}`);
+                const res = await fetch(`${API_BASE}/api/events/${id}`);
                 if (!res.ok) {
                     throw new Error("Network response was not ok");
                 }

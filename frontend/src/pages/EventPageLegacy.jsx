@@ -14,7 +14,7 @@ const EventPage = () => {
 
   const deleteEvent = async (id) => {
     try {
-      const res = await fetch(`/api/events/${id}`, {
+      const res = await fetch(`${API_BASE}/api/events/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/JSON",
@@ -35,7 +35,7 @@ const EventPage = () => {
     const fetchEvent = async () => {
       try {
         console.log("id: ", id);
-        const res = await fetch(`/api/events/${id}`);
+        const res = await fetch(`${API_BASE}/api/events/${id}`);
         if (!res.ok) {
           throw new Error("Network response was not ok");
         }

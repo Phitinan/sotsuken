@@ -95,7 +95,7 @@ export default function MapPage() {
   useEffect(() => {
     const loadSpots = async () => {
       try {
-        const { data } = await axios.get("/api/spots");
+        const { data } = await axios.get("${API_BASE}/api/spots");
         setSpots(data);
       } catch (err) {
         console.error("Failed to load spots:", err);
@@ -115,7 +115,7 @@ export default function MapPage() {
   }, []);
 
   useEffect(() => {
-    axios.get("/api/hanabi")
+    axios.get("${API_BASE}/api/hanabi")
       .then(res => setHanabiEvents(res.data))
       .catch(err => console.error("Failed to load hanabi events:", err));
   }, []);

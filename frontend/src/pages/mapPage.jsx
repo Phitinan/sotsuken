@@ -113,7 +113,7 @@ export default function MapPage() {
     useEffect(() => {
         const loadSpots = async () => {
             try {
-                const { data } = await axios.get(`/api/spots`);
+                const { data } = await axios.get(`${API_BASE}/api/spots`);
                 setSpots(data);
             } catch (err) {
                 console.error("Failed to load spots:", err);

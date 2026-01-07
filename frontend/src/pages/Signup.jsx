@@ -17,10 +17,10 @@ const Signup = ({ setIsAuthenticated }) => {
   const profile_pic = useField("profile_pic"); 
   const { value, onChange } = name;
 
-  const { signup, error } = useSignup(`/api/users/signup`);
+  const { signup, error } = useSignup(`${API_BASE}/api/users/signup`);
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const res = await fetch(`/api/goog/google-login`, {
+      const res = await fetch(`${API_BASE}/api/goog/google-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: credentialResponse.credential }),

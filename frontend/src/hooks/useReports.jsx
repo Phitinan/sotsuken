@@ -19,7 +19,7 @@ export default function useSeasonReports(token) {
 
         try {
             const res = await axios.get(
-                `/api/spots/${spotId}/season-reports`
+                `${API_BASE}/api/spots/${spotId}/season-reports`
             );
             
             setSeasonReports(res.data.seasonReports || []);
@@ -40,7 +40,7 @@ export default function useSeasonReports(token) {
 
         try {
             const res = await axios.post(
-                `/api/spots/${spotId}/season-reports`,
+                `${API_BASE}/api/spots/${spotId}/season-reports`,
                 payload,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -60,7 +60,7 @@ export default function useSeasonReports(token) {
 
         try {
             const res = await axios.put(
-                `/api/spots/${spotId}/season-reports/${reportId}`,
+                `${API_BASE}/api/spots/${spotId}/season-reports/${reportId}`,
                 payload,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -80,7 +80,7 @@ export default function useSeasonReports(token) {
 
         try {
             const res = await axios.delete(
-                `/api/spots/${spotId}/season-reports/${reportId}`,
+                `${API_BASE}/api/spots/${spotId}/season-reports/${reportId}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
