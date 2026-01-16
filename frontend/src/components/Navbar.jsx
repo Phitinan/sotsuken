@@ -25,7 +25,7 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
       return (
         <div className="auth-info">
           <button onClick={handleClick}>ログアウト</button>
-          <span>{username}</span>
+          <a>{username}</a>
         </div>
       );
     } else {

@@ -37,6 +37,7 @@ const spotSchema = new mongoose.Schema({
     days: { type: [Number] },
     openTime: { type: String },
     closeTime: { type: String },
+    is24h: {type: Boolean},
     infoUrl: { type: String },
   },
   accessFees: { type: String, default:"無料"},

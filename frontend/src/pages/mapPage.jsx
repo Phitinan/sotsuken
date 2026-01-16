@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import axios from "axios";
+
 import './MapPage.css';
 import useAddSpot from "../hooks/useAddSpot";
 import { useUploadPhotos } from "../hooks/useUpload";
@@ -30,6 +31,7 @@ export default function MapPage() {
     const [showSeasonReports, setShowSeasonReports] = useState(false);
     const [uploadingPhotos, setUploadingPhotos] = useState(false);
     const [searchText, setSearchText] = useState("");
+    const viewerPhotoInputRef = useRef(null);
     const [seasonForm, setSeasonForm] = useState({
         status: "",
         note: "",
@@ -41,11 +43,13 @@ export default function MapPage() {
         hanabi: "https://res.cloudinary.com/dz2xri489/image/upload/v1764618894/Image_3_bug7ov.png",
         toritetsu: "https://res.cloudinary.com/dz2xri489/image/upload/v1764621671/Image_4_d8ozmy.png",
         seasonal: "https://res.cloudinary.com/dz2xri489/image/upload/v1764618894/Image_5_hxanim.png",
-        hanabiEvent: "https://res.cloudinary.com/dz2xri489/image/upload/v1765306226/ha_vjjb59.png",
+        hanabiEvent: "https://res.cloudinary.com/dz2xri489/image/upload/v1768204709/ha_qpefu8.png",
         hanabiRed: "https://res.cloudinary.com/dz2xri489/image/upload/v1765312141/Image_8_h9s3mw.png"
     };
 
     const { uploadPhotos } = useUploadPhotos();
+    const [showPhotoViewer, setShowPhotoViewer] = useState(false);
+    const [photoIndex, setPhotoIndex] = useState(0);
     const { subtypeLibrary, loadSubtypes, createSubtype } = useSubtypeLibrary();
     const storedUser = localStorage.getItem("user");
     const token = storedUser ? JSON.parse(storedUser).token : null;
@@ -148,15 +152,53 @@ export default function MapPage() {
                     } />
 
                     <div className="panel-content">
-                        <button className="close-btn" onClick={() => setSelectedSpot(null)}>✕</button>
+                        <button className="close-btn" onClick={() => {
+                            setSelectedSpot(null);
+                            setShowPhotoInfo(false);
+                            setShowAccessRules(false);
+                        }}>✕</button>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            ref={viewerPhotoInputRef}
+                            style={{ display: "none" }}
+                            onChange={async (e) => {
+                                if (!e.target.files.length) return;
+
+                                setUploadingPhotos(true);
+                                try {
+                                    const uploaded = await uploadPhotos({
+                                        spotId: selectedSpot._id,
+                                        files: e.target.files,
+                                        token,
+                                    });
+
+                                    setSelectedSpot(prev => ({
+                                        ...prev,
+                                        photos: [
+                                            ...(prev.photos || []),
+                                            ...uploaded.map(p => ({
+                                                url: p.url || `/uploads/${p.filename}`,
+                                            })),
+                                        ],
+                                    }));
+                                } finally {
+                                    setUploadingPhotos(false);
+                                    e.target.value = ""; // allow re-upload same file
+                                }
+                            }}
+                        />
+
                         <div className="spot-title-row">
                             <h2 className="spot-title">{selectedSpot.name}</h2>
                             {selectedSpot.type == "seasonal" && (
                                 <button
-                                    className={`season-chip ${latestReport.status}`}
+                                    className="season-chip"
+                                    data-status={latestReport.status}
                                     onClick={() => setShowSeasonReports(true)}
                                 >
-                                    {["見頃情報なし", "序盤", "見頃前", "見頃", "後半", "見頃後"][latestReport.status + 0]}
+                                    {["見頃報告なし", "序盤", "見頃前", "見頃", "後半", "見頃後"][latestReport.status]}
                                 </button>
                             )}
 
@@ -178,21 +220,61 @@ export default function MapPage() {
                         </div>
 
                         <p>
-                            <b>Type:</b> {selectedSpot.type}
+                            <b>ジャンル:</b> {{ hanabi: "花火", seasonal: "季節", toritetsu: "撮り鉄" }[selectedSpot.type]}
                             {selectedSpot.subtype && <> <b>:</b> {selectedSpot.subtype}</>}
                         </p>
 
                         {selectedSpot.photos?.length > 0 ? (
                             <div className="carousel-container">
                                 <div className="carousel-wrapper">
+                                    <div
+                                        className="carousel-add-tile"
+                                        onClick={() => viewerPhotoInputRef.current.click()}
+                                    >
+                                        <span className="plus">＋</span>
+                                        <span className="text">写真を追加</span>
+                                    </div>
+                                    {/* Existing photos */}
                                     {selectedSpot.photos.map((photo, index) => (
-                                        <img key={index} src={photo.url} alt="" className="carousel-image" />
+                                        <img
+                                            key={index} src={photo.url} alt=""
+                                            className="carousel-image"
+                                            onClick={() => {
+                                                setPhotoIndex(index);
+                                                setShowPhotoViewer(true);
+                                            }}
+                                        />
                                     ))}
                                 </div>
                             </div>
                         ) : (
-                            <p>写真はまだありません</p>
+                            <div className="carousel-container">
+                                <div
+                                    className="carousel-add-tile"
+                                    onClick={() => viewerPhotoInputRef.current.click()}
+                                >
+                                    <span className="plus">＋</span>
+                                    <span className="text">写真を追加</span>
+                                </div>
+                            </div>
                         )}
+                        {showPhotoViewer && (
+                            <div className="photo-viewer-overlay" onClick={() => setShowPhotoViewer(false)}>
+                                
+                                <div
+                                    className="photo-viewer"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+
+                                    <img
+                                        src={selectedSpot.photos[photoIndex]?.url}
+                                        alt=""
+                                        className="photo-viewer-image"
+                                    />
+                                </div>
+                            </div>
+                        )}
+
                         <p>{selectedSpot.description}</p>
                         <button
                             className="optional-toggle"
@@ -220,7 +302,7 @@ export default function MapPage() {
                                         </div>
 
                                         <p>営業時間：{selectedSpot.accessTime.openTime} – {selectedSpot.accessTime.closeTime}</p>
-                                        <a>{selectedSpot.accessTime.infoUrl}</a>
+                                        <a href={selectedSpot.accessTime.infoUrl} target="_blank" rel="noopener noreferrer">{selectedSpot.accessTime.infoUrl}</a>
                                         <p>入場料：{selectedSpot.accessFees}</p>
                                     </div>
                                 ) : (
@@ -257,7 +339,7 @@ export default function MapPage() {
                         <div className="reviews-section">
                             <div className="reviews-header">
                                 <h3>コメント</h3>
-                                <button className="add-review-btn" onClick={() => setShowAddReview(true)}>+</button>
+                                <button className="add-review-btn" onClick={() => setShowAddReview(v => !v)}>+</button>
                             </div>
                             {selectedSpot?.ratingSummary?.count > 0 ? (
                                 <p className="reviews-summary">
@@ -324,18 +406,18 @@ export default function MapPage() {
                             <div className="full-overlay-content" onClick={(e) => e.stopPropagation()}>
                                 {/* Header */}
                                 <div className="season-sheet-header">
-                                    <h3>Season Reports</h3>
+                                    <h3>季節報告一覧</h3>
                                     <button className="close-btn" onClick={() => setShowSeasonReports(false)}>✕</button>
                                 </div>
 
                                 {/* List */}
                                 <div className="season-sheet-content">
-                                    {selectedSpot.seasonReports?.length === 0 && <p>No season reports yet</p>}
+                                    {selectedSpot.seasonReports?.length === 0 && <p>見頃報告がまだありません</p>}
 
                                     {selectedSpot.seasonReports?.sort((a, b) => new Date(b.date) - new Date(a.date))
                                         .map((report) => (
-                                            <div key={report._id} className="season-report">
-                                                <div className={`status ${report.status}`}>{["見頃情報なし", "序盤", "見頃前", "見頃", "後半", "見頃後"][report.status]}</div>
+                                            <div key={report._id} className="season-report" data-status={report.status}>
+                                                <div className={`status ${report.status}`}>{["見頃報告なし", "序盤", "見頃前", "見頃", "後半", "見頃後"][report.status]}</div>
                                                 <div>{report.date?.slice(0, 10)}</div>
                                                 <p>{report.note}</p>
                                             </div>
@@ -346,12 +428,12 @@ export default function MapPage() {
                                 <div className="season-sheet-footer">
                                     <select
                                         className="input"
-                                        value={seasonForm.status || ""}
+                                        value={seasonForm.status ?? ""}
                                         onChange={(e) =>
                                             setSeasonForm((prev) => ({ ...prev, status: Number(e.target.value) }))
                                         }
                                     >
-                                        <option value="">Season status</option>
+                                        <option value="">季節状態</option>
                                         <option value={0}>季節外</option>
                                         <option value={1}>序盤</option>
                                         <option value={2}>見頃前</option>
@@ -360,14 +442,17 @@ export default function MapPage() {
                                         <option value={5}>終盤</option>
                                     </select>
 
-                                    <input
-                                        type="date"
-                                        className="input"
-                                        value={seasonForm.date || ""}
-                                        onChange={(e) =>
-                                            setSeasonForm((prev) => ({ ...prev, date: e.target.value }))
-                                        }
-                                    />
+                                    <div className="date-row">
+                                        <label className="date-label">観測日</label>
+                                        <input
+                                            type="date"
+                                            className="input"
+                                            value={seasonForm.date || ""}
+                                            onChange={(e) =>
+                                                setSeasonForm((prev) => ({ ...prev, date: e.target.value }))
+                                            }
+                                        />
+                                    </div>
 
                                     <textarea
                                         className="input"
@@ -408,7 +493,7 @@ export default function MapPage() {
                                             }
                                         }}
                                     >
-                                        Add Season Report
+                                        送信
                                     </button>
                                 </div>
                             </div>
@@ -527,10 +612,55 @@ export default function MapPage() {
                                         {day}
                                     </label>
                                 ))}
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        checked={(formData.accessTime?.days?.length || 0) === 7}
+                                        onChange={() => {
+                                            const selected = formData.accessTime?.days || [];
+
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                accessTime: {
+                                                    ...prev.accessTime,
+                                                    days: selected.length === 7 ? [] : [0, 1, 2, 3, 4, 5, 6],
+                                                },
+                                            }));
+                                        }}
+                                    />
+                                    全曜日
+                                </label>
                             </div>
 
                             {/* Open / Close Time */}
-                            <label>営業開始時間</label>
+                            <div className="date-row" style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center"
+                            }}>
+                                <label>営業開始時間</label>
+                                <div style={{ textAlign: "right" }}>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.accessTime?.is24h || false}
+                                            onChange={(e) =>
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    accessTime: {
+                                                        ...prev.accessTime,
+                                                        is24h: e.target.checked,
+                                                        openTime: e.target.checked ? "00:00" : "",
+                                                        closeTime: e.target.checked ? "23:59" : "",
+                                                    },
+                                                }))
+                                            }
+                                        />
+                                        24時間営業
+                                    </label>
+                                </div>
+                            </div>
+
                             <input
                                 type="time"
                                 value={formData.accessTime?.openTime || ""}
@@ -538,7 +668,7 @@ export default function MapPage() {
                                 onChange={(e) =>
                                     setFormData(prev => ({
                                         ...prev,
-                                        accessTime: { ...prev.accessTime, openTime: e.target.value }
+                                        accessTime: { ...prev.accessTime, is24h: false, openTime: e.target.value }
                                     }))
                                 }
                             />
@@ -551,7 +681,7 @@ export default function MapPage() {
                                 onChange={(e) =>
                                     setFormData(prev => ({
                                         ...prev,
-                                        accessTime: { ...prev.accessTime, closeTime: e.target.value }
+                                        accessTime: { ...prev.accessTime, is24h: false, closeTime: e.target.value }
                                     }))
                                 }
                             />
@@ -692,14 +822,16 @@ export default function MapPage() {
                 </div>
             )
             }
-            {uploadingPhotos && (
-                <div className="upload-overlay">
-                    <div className="upload-popup">
-                        写真をアップロード中...
+            {
+                uploadingPhotos && (
+                    <div className="upload-overlay">
+                        <div className="upload-popup">
+                            写真をアップロード中...
+                        </div>
                     </div>
-                </div>
 
-            )}
+                )
+            }
         </div >
     );
 }

@@ -19,6 +19,7 @@ export default function useAddSpot(token) {
             days: [],
             openTime: "",
             closeTime: "",
+            is24h: false,
             infoUrl: ""
         },
         accessFees: "",
@@ -47,6 +48,7 @@ export default function useAddSpot(token) {
                 days: [],
                 openTime: "",
                 closeTime: "",
+                is24h: false,
                 infoUrl: ""
             },
             accessFees: "",
