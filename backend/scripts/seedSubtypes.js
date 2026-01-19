@@ -7,26 +7,37 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load subtype JSON
-const filePath = path.join(__dirname, "../data/subtypes.json");
+const filePath = path.join(__dirname, "../data/hanabi.json");
 const raw = fs.readFileSync(filePath, "utf8");
-const subtypeData = JSON.parse(raw);
-const API_BASE = import.meta.env.VITE_API_BASE;
+const hanabiData = JSON.parse(raw);
+const API_BASE = ""
 
-const API_URL = `/api/subtypes`;
+const API_URL = `http://localhost:4000/api/subtypes`;
 
 async function seed() {
-  console.log("Seeding subtypes...");
+  console.log("Seeding hanabi...");
+  const type = "hanabi"
 
-  for (const type of Object.keys(subtypeData)) {
-    for (const name of subtypeData[type]) {
-      try {
-        await axios.post(API_URL, { type, name });
-        console.log(`✓ Inserted: ${type} → ${name}`);
-      } catch (err) {
-        console.log(`✗ Failed: ${type} → ${name}`, err.message);
-      }
+  for (const festival of hanabiData) {
+    const { name} = festival;
+
+
+    try {
+      await axios.post(API_URL, {
+        name,
+        type        
+      });
+      console.log(`✓ Inserted: ${name}`);
+    } catch (err) {
+        if (err.response?.status === 409) {
+          console.log(`⏭ Skipped (exists): ${festival.name}`);
+          continue;
+        }      
+      console.log(`✗ Failed: ${name}`, err.message);
+      break;
     }
   }
+
 
   console.log("Done!");
 }

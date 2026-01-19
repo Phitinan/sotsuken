@@ -53,18 +53,13 @@ export default function useMap(containerRef, addingRef, setCoordinates, setSelec
     return () => map.remove();
   }, []); // Run once on mount
 
-  function flyToUserLocation(map) {
-    if (!navigator.geolocation) {
-      alert("Geolocation is not supported");
-      return;
-    }
+  const flyToUserLocation = () => {
+    if (!navigator.geolocation || !mapRef.current) return;
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-
-        map.flyTo({
-          center: [longitude, latitude],
+      ({ coords }) => {
+        mapRef.current.flyTo({
+          center: [coords.longitude, coords.latitude],
           zoom: 15,
           essential: true,
         });
@@ -74,7 +69,8 @@ export default function useMap(containerRef, addingRef, setCoordinates, setSelec
         alert("Unable to retrieve your location");
       }
     );
-  }
+  };
+
 
   const flyToPlace = async (query) => {
     if (!query || !mapRef.current) return;

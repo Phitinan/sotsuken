@@ -30,7 +30,7 @@ export default function useSpotMarkers(mapRef, spots, filter, selectedHanabi, se
         backgroundSize: "contain", backgroundRepeat: "no-repeat"
       });
 
-      const marker = new maplibregl.Marker({ element: el })
+      const marker = new maplibregl.Marker({ element: el, anchor: "bottom"})
         .setLngLat(spot.location.coordinates)
         .addTo(map);
 

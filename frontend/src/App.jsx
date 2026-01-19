@@ -22,7 +22,7 @@ const App = () => {
         <div className="content">
           <Routes>
             {/* Public routes */}
-            <Route path="/" element={<MapPage />} /> {/* Public map view */}
+            <Route path="/" element={<MapPage isAuthenticated={isAuthenticated}/>} /> {/* Public map view */}
             <Route path="/login" element={isAuthenticated ? <Navigate to="/" /> : <Login setIsAuthenticated={setIsAuthenticated} />} />
             <Route path="/signup" element={isAuthenticated ? <Navigate to="/" /> : <Signup setIsAuthenticated={setIsAuthenticated} />} />
             

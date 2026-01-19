@@ -30,6 +30,7 @@ export default function MapPage() {
     const [showAddReview, setShowAddReview] = useState(false);
     const [showSeasonReports, setShowSeasonReports] = useState(false);
     const [uploadingPhotos, setUploadingPhotos] = useState(false);
+    const [showLoginPrompt, setShowLoginPrompt] = useState(false);
     const [searchText, setSearchText] = useState("");
     const viewerPhotoInputRef = useRef(null);
     const [seasonForm, setSeasonForm] = useState({
@@ -110,7 +111,13 @@ export default function MapPage() {
         return sorted[0];
     }, [selectedSpot]);
 
-
+    const requireAuth = (action) => {
+        if (!isAuthenticated) {
+            setShowLoginPrompt(true);
+            return;
+        }
+        action();
+    };
 
 
     // --- Fetch Spots Data ---
@@ -154,6 +161,7 @@ export default function MapPage() {
                     <div className="panel-content">
                         <button className="close-btn" onClick={() => {
                             setSelectedSpot(null);
+                            setSelectedHanabi(null);
                             setShowPhotoInfo(false);
                             setShowAccessRules(false);
                         }}>✕</button>
@@ -229,7 +237,7 @@ export default function MapPage() {
                                 <div className="carousel-wrapper">
                                     <div
                                         className="carousel-add-tile"
-                                        onClick={() => viewerPhotoInputRef.current.click()}
+                                        onClick={() => requireAuth(() =>viewerPhotoInputRef.current.click())}
                                     >
                                         <span className="plus">＋</span>
                                         <span className="text">写真を追加</span>
@@ -260,7 +268,7 @@ export default function MapPage() {
                         )}
                         {showPhotoViewer && (
                             <div className="photo-viewer-overlay" onClick={() => setShowPhotoViewer(false)}>
-                                
+
                                 <div
                                     className="photo-viewer"
                                     onClick={(e) => e.stopPropagation()}
@@ -339,7 +347,7 @@ export default function MapPage() {
                         <div className="reviews-section">
                             <div className="reviews-header">
                                 <h3>コメント</h3>
-                                <button className="add-review-btn" onClick={() => setShowAddReview(v => !v)}>+</button>
+                                <button className="add-review-btn" onClick={() => requireAuth(() => setShowAddReview(v => !v))}>+</button>
                             </div>
                             {selectedSpot?.ratingSummary?.count > 0 ? (
                                 <p className="reviews-summary">
@@ -512,7 +520,7 @@ export default function MapPage() {
                     <button onClick={() => handleFilterClick("hanabi")}>花火</button>
                     <button onClick={() => handleFilterClick("toritetsu")}>撮り鉄</button>
                     <button onClick={() => handleFilterClick("seasonal")}>季節</button>
-                    <button className="special" onClick={() => { startAdding(); setIsFilterOpen(false); }}>スポット追加</button>
+                    <button className="special" onClick={() => requireAuth(() => { startAdding(); setIsFilterOpen(false); })}>スポット追加</button>
                     <div className="flyto-container">
                         <input
                             placeholder="町名・都市名"
@@ -832,6 +840,34 @@ export default function MapPage() {
 
                 )
             }
+
+            {showLoginPrompt && (
+                <div className="login-popup-overlay" onClick={() => setShowLoginPrompt(false)}>
+                    <div className="login-popup" onClick={(e) => e.stopPropagation()}>
+                        <h3>ログインが必要です</h3>
+                        <p>この操作を行うにはログインしてください。</p>
+
+                        <div className="login-popup-actions">
+                            <button
+                                className="login-btn"
+                                onClick={() => navigate("/login")}
+                            >
+                                ログイン
+                            </button>
+
+                            <button
+                                className="cancel-btn"
+                                onClick={() => setShowLoginPrompt(false)}
+                            >
+                                キャンセル
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div >
+
     );
+
 }

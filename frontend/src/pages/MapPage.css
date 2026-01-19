@@ -32,6 +32,7 @@ body,
   text-decoration: underline;
   padding: 4px 10px;
   border-radius: 999px;
+  min-width: 100px;
   border: none;
   color:#1f1f1f
 }
@@ -349,10 +350,12 @@ body,
 }
 
 .bottom-info-panel p,
-span {
+.bottom-info-panel a,
+.bottom-info-panel span {
+  display: inline-block;
   color: #f0f0f0;
   opacity: 0.85;
-  margin-bottom: 6px;
+  margin-top: 6px;
 }
 
 .bottom-info-panel b,a,div,button,label {
@@ -862,4 +865,39 @@ span {
   border-radius: 8px;
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+
+.login-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-popup {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 320px;
+  text-align: center;
+}
+
+.login-popup-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.login-btn {
+  flex: 1;
+}
+
+.cancel-btn {
+  flex: 1;
 }

@@ -10,9 +10,9 @@ const __dirname = path.dirname(__filename);
 const filePath = path.join(__dirname, "../data/hanabi.json");
 const raw = fs.readFileSync(filePath, "utf8");
 const hanabiData = JSON.parse(raw);
-const API_BASE = import.meta.env.VITE_API_BASE;
+const API_BASE = ""
 
-const API_URL = `/api/hanabi`;
+const API_URL = `http://localhost:4000/api/hanabi`;
 
 async function seed() {
   console.log("Seeding hanabi...");
@@ -30,7 +30,12 @@ async function seed() {
       });
       console.log(`✓ Inserted: ${name}`);
     } catch (err) {
+        if (err.response?.status === "Error") {
+          console.log(`⏭ Skipped (exists): ${festival.name}`);
+          continue;
+        }      
       console.log(`✗ Failed: ${name}`, err.message);
+      break;
     }
   }
 

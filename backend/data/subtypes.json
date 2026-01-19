@@ -1,11 +1,4 @@
 {
-  "hanabi": [
-    "Sumida River Fireworks",
-    "Nagaoka Fireworks",
-    "Omagari Fireworks",
-    "Kachimai Fireworks",
-    "Lake Biwa Fireworks"
-  ],
 
   "toritetsu": [
     "IRいしかわ鉄道線",
@@ -572,12 +565,5 @@
     "鹿島線",
     "鹿島臨海鉄道大洗鹿島線",
     "黒部峡谷鉄道本線"
-  ],
-
-  "seasonal": [
-    "Sakura Spots",
-    "Momiji Spots",
-    "Snow Festivals",
-    "Illuminations"
   ]
 }
