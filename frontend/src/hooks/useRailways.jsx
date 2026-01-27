@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import maplibregl from "maplibre-gl";
 const API_BASE = import.meta.env.VITE_API_BASE;
 
-export default function useRailways(mapRef, filter, setFilter, addingRef) {
+export default function useRailways(mapRef, filter, setFilter, addingRef, selectedLine, setSelectedLine) {
   const [railData, setRailData] = useState(null);
-  const [selectedLine, setSelectedLine] = useState(null);
 
   // 1. Fetch Data
   useEffect(() => {
@@ -20,7 +19,7 @@ export default function useRailways(mapRef, filter, setFilter, addingRef) {
     const map = mapRef.current;
 
     // Filter valid trains
-    const VALID_RAILWAYS = ["rail", "light_rail", "subway", "monorail"];
+    const VALID_RAILWAYS = ["rail", "light_rail", "subway", "monorail", "tram"];
     const trainFeatures = railData.features.filter(f => {
       const type = f.properties?.railway;
       if (!VALID_RAILWAYS.includes(type)) return false;
@@ -52,20 +51,20 @@ export default function useRailways(mapRef, filter, setFilter, addingRef) {
       layout: {
         "line-join": "round",
         "line-cap": "round",
-        "visibility": filter === "toritetsu" ? "visible" : "none"
+        "visibility": "visible"
       },
       paint: {
         "line-color": [
-            "case",
-            ["any", ["==", ["get", "name"], selectedLine || ""], ["==", ["get", "line_name"], selectedLine || ""]],
-            "#ff0000",
-            "#c28181ff"
+          "case",
+          ["any", ["==", ["get", "name"], selectedLine || ""], ["==", ["get", "line_name"], selectedLine || ""]],
+          "#ff0000",
+          "#c28181ff"
         ],
         "line-width": [
-            "case",
-            ["any", ["==", ["get", "name"], selectedLine || ""], ["==", ["get", "line_name"], selectedLine || ""]],
-            3.5,
-            1.5
+          "case",
+          ["any", ["==", ["get", "name"], selectedLine || ""], ["==", ["get", "line_name"], selectedLine || ""]],
+          3.5,
+          1.5
         ]
       }
     });
@@ -80,8 +79,19 @@ export default function useRailways(mapRef, filter, setFilter, addingRef) {
       if (map.getLayoutProperty(layerId, 'visibility') === 'none') return;
 
       const bbox = [[e.point.x - 5, e.point.y - 5], [e.point.x + 5, e.point.y + 5]];
-      const features = map.queryRenderedFeatures(bbox, { layers: [layerId] });
-      
+      const features = map
+        .queryRenderedFeatures(bbox, { layers: [layerId] })
+        .filter(f => {
+          const name = f.properties.name || f.properties.line_name;
+          if (!name) return false;
+
+          // Allow all clicks in toritetsu mode
+          if (filter === "toritetsu") return true;
+
+          // Otherwise only allow selected line
+          return name === selectedLine;
+        });
+
       if (!features.length) return;
 
       const uniqueLines = new Map();
@@ -100,7 +110,7 @@ export default function useRailways(mapRef, filter, setFilter, addingRef) {
         .setLngLat(e.lngLat)
         .setHTML(`<div class="railway-popup-content"><h4 class="railway-popup-title">鉄道</h4>${listHtml}</div>`)
         .addTo(map);
-      
+
       // Bind click events to popup items
       setTimeout(() => {
         document.querySelectorAll(".railway-popup-item").forEach(item => {
@@ -119,21 +129,72 @@ export default function useRailways(mapRef, filter, setFilter, addingRef) {
 
     // Cleanup listener on re-render to avoid duplicates
     return () => {
-        map.off('click', handleClick);
-        map.off('mouseenter', layerId);
-        map.off('mouseleave', layerId);
+      map.off('click', handleClick);
+      map.off('mouseenter', layerId);
+      map.off('mouseleave', layerId);
     };
 
-  }, [railData, selectedLine, mapRef]); // Re-run when data or selection changes
+  }, [railData, mapRef]); // Re-run when data or selection changes
+  useEffect(() => {
+    if (!mapRef.current) return;
+    const map = mapRef.current;
+
+    const layerId = "railway-lines-layer";
+    if (!map.getLayer(layerId)) return;
+
+    map.setPaintProperty(layerId, "line-color", [
+      "case",
+      [
+        "any",
+        ["==", ["get", "name"], selectedLine || ""],
+        ["==", ["get", "line_name"], selectedLine || ""]
+      ],
+      "#ff0000",
+      "#c28181ff"
+    ]);
+
+    map.setPaintProperty(layerId, "line-width", [
+      "case",
+      [
+        "any",
+        ["==", ["get", "name"], selectedLine || ""],
+        ["==", ["get", "line_name"], selectedLine || ""]
+      ],
+      3.5,
+      1.5
+    ]);
+
+  }, [selectedLine]);
+
 
   // 3. Toggle Visibility based on Filter
   useEffect(() => {
     if (!mapRef.current) return;
     const map = mapRef.current;
-    if (map.getLayer("railway-lines-layer")) {
-      map.setLayoutProperty("railway-lines-layer", "visibility", filter === "toritetsu" ? "visible" : "none");
-    }
-  }, [filter]);
+    const layerId = "railway-lines-layer";
+
+    if (!map.getLayer(layerId)) return;
+
+    map.setPaintProperty(layerId, "line-opacity", [
+      "case",
+      // Always show selected line
+      [
+        "any",
+        ["==", ["get", "name"], selectedLine || ""],
+        ["==", ["get", "line_name"], selectedLine || ""]
+      ],
+      1,
+
+      // If filter = toritetsu, show others
+      filter === "toritetsu",
+      1,
+
+      // Otherwise hide non-selected lines
+      0
+    ]);
+
+  }, [filter, selectedLine]);
+
 
   return { selectedLine, setSelectedLine };
 }

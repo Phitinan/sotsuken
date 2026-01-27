@@ -16,12 +16,13 @@ import useRailways from "../hooks/useRailways";
 import useHanabiEvents from "../hooks/useHanabiEvents";
 import useSpotMarkers from "../hooks/useSpotMarkers";
 
-export default function MapPage() {
+export default function MapPage({isAuthenticated }) {
     // --- Refs & State ---
     const mapContainer = useRef(null);
     const [spots, setSpots] = useState([]);
     const [filter, setFilter] = useState("all");
     const [selectedSpot, setSelectedSpot] = useState(null);
+    const [selectedLine, setSelectedLine] = useState(null);
     const [isFilterOpen, setIsFilterOpen] = useState(true);
     const [showPhotoInfo, setShowPhotoInfo] = useState(false);
     const [showAccessRules, setShowAccessRules] = useState(false);
@@ -41,11 +42,13 @@ export default function MapPage() {
 
 
     const markerIcons = {
-        hanabi: "https://res.cloudinary.com/dz2xri489/image/upload/v1764618894/Image_3_bug7ov.png",
-        toritetsu: "https://res.cloudinary.com/dz2xri489/image/upload/v1764621671/Image_4_d8ozmy.png",
-        seasonal: "https://res.cloudinary.com/dz2xri489/image/upload/v1764618894/Image_5_hxanim.png",
+        hanabi: "https://res.cloudinary.com/dz2xri489/image/upload/v1769171709/Image_3_xvdwsd.png",
+        toritetsu: "https://res.cloudinary.com/dz2xri489/image/upload/v1769171691/Image_4_lecvim.png",
+        seasonal: "https://res.cloudinary.com/dz2xri489/image/upload/v1769171692/Image_5_zywcec.png",
         hanabiEvent: "https://res.cloudinary.com/dz2xri489/image/upload/v1768204709/ha_qpefu8.png",
-        hanabiRed: "https://res.cloudinary.com/dz2xri489/image/upload/v1765312141/Image_8_h9s3mw.png"
+        hanabiRed: "https://res.cloudinary.com/dz2xri489/image/upload/v1769171110/Image_8_vcbi9q.png",
+        toritetsuRed:"https://res.cloudinary.com/dz2xri489/image/upload/v1769171645/Image_6_smszqe.png",
+        seasonalRed:"https://res.cloudinary.com/dz2xri489/image/upload/v1769171659/Image_2_cll7yf.png"
     };
 
     const { uploadPhotos } = useUploadPhotos();
@@ -85,13 +88,13 @@ export default function MapPage() {
 
     // --- 2. Railway Logic Hook ---
     // Returns selectedLine if you need it, but it handles its own internal state mostly
-    useRailways(mapRef, filter, setFilter, addingRef);
+    useRailways(mapRef, filter, setFilter, addingRef, selectedLine, setSelectedLine);
 
     // --- 3. Hanabi Events Hook ---
     useHanabiEvents(mapRef, filter, selectedHanabi, setSelectedHanabi, markerIcons.hanabiEvent);
 
     // --- 4. Spot Markers Hook ---
-    useSpotMarkers(mapRef, spots, filter, selectedHanabi, setSelectedHanabi, setSelectedSpot, markerIcons);
+    useSpotMarkers(mapRef, spots, filter, selectedHanabi, setSelectedHanabi, setSelectedSpot, markerIcons, setSelectedLine, selectedSpot);
 
     // 5. Review Hook
     useEffect(() => {
@@ -143,6 +146,7 @@ export default function MapPage() {
         setFilter(type);
         setSelectedSpot(null);
         setSelectedHanabi("");
+        setSelectedLine("");
         if (window.innerWidth < 900) setIsFilterOpen(false);
     };
     console.log(selectedSpot);
@@ -164,6 +168,7 @@ export default function MapPage() {
                             setSelectedHanabi(null);
                             setShowPhotoInfo(false);
                             setShowAccessRules(false);
+                            setPanelState("half");
                         }}>✕</button>
                         <input
                             type="file"
@@ -237,7 +242,7 @@ export default function MapPage() {
                                 <div className="carousel-wrapper">
                                     <div
                                         className="carousel-add-tile"
-                                        onClick={() => requireAuth(() =>viewerPhotoInputRef.current.click())}
+                                        onClick={() => requireAuth(() => viewerPhotoInputRef.current.click())}
                                     >
                                         <span className="plus">＋</span>
                                         <span className="text">写真を追加</span>

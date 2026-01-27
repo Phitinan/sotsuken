@@ -1,48 +1,61 @@
 import { useEffect, useRef } from "react";
 import maplibregl from "maplibre-gl";
 
-export default function useSpotMarkers(mapRef, spots, filter, selectedHanabi, setSelectedHanabi, setSelectedSpot, markerIcons) {
-  const markersRef = useRef([]);
-
+export default function useSpotMarkers(mapRef, spots, filter, selectedHanabi, setSelectedHanabi, setSelectedSpot, markerIcons, setSelectedLine, selectedSpot) {
+  const markersRef = useRef(new Map());
   useEffect(() => {
     if (!mapRef.current) return;
     const map = mapRef.current;
 
-    // Clear existing markers
-    markersRef.current.forEach(marker => marker?.remove());
-    markersRef.current = [];
+    // Remove markers that no longer exist
+    markersRef.current.forEach((marker, id) => {
+      if (!spots.find(s => s._id === id)) {
+        marker.remove();
+        markersRef.current.delete(id);
+      }
+    });
 
     spots.forEach((spot) => {
       if (filter !== "all" && spot.type !== filter) return;
+      if (markersRef.current.has(spot._id)) return; // already exists
 
       const el = document.createElement("div");
       el.className = `marker marker-${spot.type}`;
-      
-      // Icon Logic
-      let iconUrl = markerIcons[spot.type];
-      if (selectedHanabi === spot.subtype && selectedHanabi && spot.type === "hanabi") {
-        iconUrl = markerIcons.hanabiRed; // Use red icon if it matches selected hanabi
-      }
 
       Object.assign(el.style, {
-        backgroundImage: `url("${iconUrl}")`,
-        width: "45px", height: "45px", cursor: "pointer",
-        backgroundSize: "contain", backgroundRepeat: "no-repeat"
+        backgroundImage: `url("${markerIcons[spot.type]}")`,
+        width: "35px",
+        height: "35px",
+        cursor: "pointer",
+        backgroundSize: "contain",
+        backgroundRepeat: "no-repeat",
       });
 
-      const marker = new maplibregl.Marker({ element: el, anchor: "bottom"})
+      const marker = new maplibregl.Marker({ element: el, anchor: "bottom" })
         .setLngLat(spot.location.coordinates)
         .addTo(map);
 
-      marker.getElement().addEventListener("click", (e) => {
+      el.addEventListener("click", (e) => {
         e.stopPropagation();
         setSelectedSpot(spot);
-        if (spot.type === "hanabi") setSelectedHanabi(spot.subtype);
-        else setSelectedHanabi("");
+        setSelectedLine(spot.type === "toritetsu" ? spot.subtype : "");
+        setSelectedHanabi(spot.type === "hanabi" ? spot.subtype : "");
       });
 
-      markersRef.current.push(marker);
+      markersRef.current.set(spot._id, { marker, el, spot });
     });
 
-  }, [spots, filter, selectedHanabi, mapRef]);
+  }, [spots, filter, mapRef]);
+
+
+  useEffect(() => {
+    markersRef.current.forEach(({ el, spot }) => {
+      const isSelected = selectedSpot?._id === spot._id;
+      const iconKey = isSelected ? `${spot.type}Red` : spot.type;
+
+      el.style.backgroundImage = `url("${markerIcons[iconKey]}")`;
+      el.style.zIndex = isSelected ? "10" : "1";
+    });
+  }, [selectedSpot]);
+
 }
