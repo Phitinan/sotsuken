@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import maplibregl from "maplibre-gl";
 
-export default function useSpotMarkers(mapRef, spots, filter, selectedHanabi, setSelectedHanabi, setSelectedSpot, markerIcons, setSelectedLine, selectedSpot) {
+export default function useSpotMarkers(mapRef, spots, filter, selectedHanabi, setSelectedHanabi, setSelectedSpotId, markerIcons, setSelectedLine, selectedSpot) {
   const markersRef = useRef(new Map());
   useEffect(() => {
     if (!mapRef.current) return;
@@ -37,7 +37,7 @@ export default function useSpotMarkers(mapRef, spots, filter, selectedHanabi, se
 
       el.addEventListener("click", (e) => {
         e.stopPropagation();
-        setSelectedSpot(spot);
+        setSelectedSpotId(spot._id);
         setSelectedLine(spot.type === "toritetsu" ? spot.subtype : "");
         setSelectedHanabi(spot.type === "hanabi" ? spot.subtype : "");
       });

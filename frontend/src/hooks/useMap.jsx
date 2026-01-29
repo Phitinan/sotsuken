@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-export default function useMap(containerRef, addingRef, setCoordinates, setSelectedSpot) {
+export default function useMap(containerRef, addingRef, setCoordinates, setSelectedSpotId) {
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function useMap(containerRef, addingRef, setCoordinates, setSelec
     map.on("click", (e) => {
       if (addingRef.current && setCoordinates) {
         setCoordinates(e.lngLat.lat, e.lngLat.lng);
-        setSelectedSpot("");
+        setSelectedSpotId("");
       }
     });
 

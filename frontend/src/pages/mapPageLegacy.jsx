@@ -15,7 +15,7 @@ export default function MapPage() {
   const markersRef = useRef([]);
   const [spots, setSpots] = useState([]);
   const [filter, setFilter] = useState("all");
-  const [selectedSpot, setSelectedSpot] = useState(null);
+  const [selectedSpot, setSelectedSpotId] = useState(null);
   const [isFilterOpen, setIsFilterOpen] = useState(true);
   const { uploadPhotos, loading: uploadingPhotos } = useUploadPhotos();
   const markerIcons = {
@@ -388,7 +388,7 @@ export default function MapPage() {
       marker.getElement().addEventListener("click", (e) => {
         e.stopPropagation();
         console.log("Clicked spot:", spot);
-        setSelectedSpot(spot);
+        setSelectedSpotId(spot._id);
         if (spot.type == "hanabi") setSelectedHanabi(spot.subtype);
         else setSelectedHanabi("");
         console.log(selectedHanabi, ", ", spot.subtype);
@@ -403,7 +403,7 @@ export default function MapPage() {
   const handleFilterClick = (type) => {
     setFilter(type);
     console.log(type);
-    setSelectedSpot(null);
+    setSelectedSpotId(null);
 
     if (window.innerWidth < 900) {
       setIsFilterOpen(false);
@@ -417,7 +417,7 @@ export default function MapPage() {
       <div ref={mapContainer} className="map-container" />
       {selectedSpot && (
         <div className="bottom-info-panel">
-          <button className="close-btn" onClick={() => setSelectedSpot(null)}>✕</button>
+          <button className="close-btn" onClick={() => setSelectedSpotId(null)}>✕</button>
 
           <h2>{selectedSpot.name}</h2>
           <a
@@ -591,7 +591,7 @@ export default function MapPage() {
                 }
               }
 
-              setSelectedSpot(createdSpot);
+              setSelectedSpotId(createdSpot._id);
               cancelAdding();
             }}
           >

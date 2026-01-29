@@ -16,12 +16,12 @@ import useRailways from "../hooks/useRailways";
 import useHanabiEvents from "../hooks/useHanabiEvents";
 import useSpotMarkers from "../hooks/useSpotMarkers";
 
-export default function MapPage({isAuthenticated }) {
+export default function MapPage({ isAuthenticated }) {
     // --- Refs & State ---
     const mapContainer = useRef(null);
     const [spots, setSpots] = useState([]);
     const [filter, setFilter] = useState("all");
-    const [selectedSpot, setSelectedSpot] = useState(null);
+    const [selectedSpotId, setSelectedSpotId] = useState(null);
     const [selectedLine, setSelectedLine] = useState(null);
     const [isFilterOpen, setIsFilterOpen] = useState(true);
     const [showPhotoInfo, setShowPhotoInfo] = useState(false);
@@ -47,8 +47,8 @@ export default function MapPage({isAuthenticated }) {
         seasonal: "https://res.cloudinary.com/dz2xri489/image/upload/v1769171692/Image_5_zywcec.png",
         hanabiEvent: "https://res.cloudinary.com/dz2xri489/image/upload/v1768204709/ha_qpefu8.png",
         hanabiRed: "https://res.cloudinary.com/dz2xri489/image/upload/v1769171110/Image_8_vcbi9q.png",
-        toritetsuRed:"https://res.cloudinary.com/dz2xri489/image/upload/v1769171645/Image_6_smszqe.png",
-        seasonalRed:"https://res.cloudinary.com/dz2xri489/image/upload/v1769171659/Image_2_cll7yf.png"
+        toritetsuRed: "https://res.cloudinary.com/dz2xri489/image/upload/v1769171645/Image_6_smszqe.png",
+        seasonalRed: "https://res.cloudinary.com/dz2xri489/image/upload/v1769171659/Image_2_cll7yf.png"
     };
 
     const { uploadPhotos } = useUploadPhotos();
@@ -58,6 +58,10 @@ export default function MapPage({isAuthenticated }) {
     const storedUser = localStorage.getItem("user");
     const token = storedUser ? JSON.parse(storedUser).token : null;
 
+    const selectedSpot = useMemo(
+        () => spots.find(s => s._id === selectedSpotId) || null,
+        [spots, selectedSpotId]
+    );
 
     const {
         reviews, userReview, setUserReview,
@@ -84,7 +88,7 @@ export default function MapPage({isAuthenticated }) {
     useEffect(() => { addingRef.current = adding }, [adding]);
 
     // --- 1. Map Initialization Hook ---
-    const { mapRef, flyToUserLocation, flyToPlace } = useMap(mapContainer, addingRef, setCoordinates, setSelectedSpot);
+    const { mapRef, flyToUserLocation, flyToPlace } = useMap(mapContainer, addingRef, setCoordinates, setSelectedSpotId);
 
     // --- 2. Railway Logic Hook ---
     // Returns selectedLine if you need it, but it handles its own internal state mostly
@@ -94,7 +98,7 @@ export default function MapPage({isAuthenticated }) {
     useHanabiEvents(mapRef, filter, selectedHanabi, setSelectedHanabi, markerIcons.hanabiEvent);
 
     // --- 4. Spot Markers Hook ---
-    useSpotMarkers(mapRef, spots, filter, selectedHanabi, setSelectedHanabi, setSelectedSpot, markerIcons, setSelectedLine, selectedSpot);
+    useSpotMarkers(mapRef, spots, filter, selectedHanabi, setSelectedHanabi, setSelectedSpotId, markerIcons, setSelectedLine, selectedSpot);
 
     // 5. Review Hook
     useEffect(() => {
@@ -144,7 +148,7 @@ export default function MapPage({isAuthenticated }) {
 
     const handleFilterClick = (type) => {
         setFilter(type);
-        setSelectedSpot(null);
+        setSelectedSpotId(null);
         setSelectedHanabi("");
         setSelectedLine("");
         if (window.innerWidth < 900) setIsFilterOpen(false);
@@ -164,7 +168,7 @@ export default function MapPage({isAuthenticated }) {
 
                     <div className="panel-content">
                         <button className="close-btn" onClick={() => {
-                            setSelectedSpot(null);
+                            setSelectedSpotId(null);
                             setSelectedHanabi(null);
                             setShowPhotoInfo(false);
                             setShowAccessRules(false);
@@ -187,15 +191,22 @@ export default function MapPage({isAuthenticated }) {
                                         token,
                                     });
 
-                                    setSelectedSpot(prev => ({
-                                        ...prev,
-                                        photos: [
-                                            ...(prev.photos || []),
-                                            ...uploaded.map(p => ({
-                                                url: p.url || `/uploads/${p.filename}`,
-                                            })),
-                                        ],
-                                    }));
+                                    setSpots(prev =>
+                                        prev.map(spot =>
+                                            spot._id === selectedSpotId
+                                                ? {
+                                                    ...spot,
+                                                    photos: [
+                                                        ...(spot.photos || []),
+                                                        ...uploaded.map(p => ({
+                                                            url: p.url || `/uploads/${p.filename}`,
+                                                        })),
+                                                    ],
+                                                }
+                                                : spot
+                                        )
+                                    );
+
                                 } finally {
                                     setUploadingPhotos(false);
                                     e.target.value = ""; // allow re-upload same file
@@ -489,10 +500,20 @@ export default function MapPage({isAuthenticated }) {
                                             };
 
                                             // Update spot locally
-                                            setSelectedSpot((prev) => ({
-                                                ...prev,
-                                                seasonReports: [...prev.seasonReports, newReport],
-                                            }));
+                                            setSpots(prev =>
+                                                prev.map(spot =>
+                                                    spot._id === selectedSpotId
+                                                        ? {
+                                                            ...spot,
+                                                            seasonReports: [
+                                                                ...(spot.seasonReports || []),
+                                                                newReport,
+                                                            ],
+                                                        }
+                                                        : spot
+                                                )
+                                            );
+
 
                                             // Reset form
                                             setSeasonForm({ status: "", note: "", date: "" });
@@ -818,7 +839,7 @@ export default function MapPage({isAuthenticated }) {
                                     })) || []
                                 };
                                 setSpots(prev => [...prev, spotWithPhotos]);
-                                setSelectedSpot(spotWithPhotos);
+                                setSelectedSpotId(spotWithPhotos._id);
 
                             } finally {
                                 setUploadingPhotos(false);
