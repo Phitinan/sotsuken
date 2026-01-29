@@ -301,7 +301,7 @@ export default function MapPage({isAuthenticated }) {
 
                                 {selectedSpot.accessTime?.days?.length ? (
                                     <div>
-                                        <p>アクセス情報</p>
+                                        <div>アクセス情報</div>
                                         <div className="days-list">
                                             {[0, 1, 2, 3, 4, 5, 6].map(day => (
                                                 <div
@@ -314,12 +314,12 @@ export default function MapPage({isAuthenticated }) {
 
                                         </div>
 
-                                        <p>営業時間：{selectedSpot.accessTime.openTime} – {selectedSpot.accessTime.closeTime}</p>
-                                        <a href={selectedSpot.accessTime.infoUrl} target="_blank" rel="noopener noreferrer">{selectedSpot.accessTime.infoUrl}</a>
-                                        <p>入場料：{selectedSpot.accessFees}</p>
+                                        <div>営業時間：{selectedSpot.accessTime.openTime} – {selectedSpot.accessTime.closeTime}</div>
+                                        <div>公式リンク：<a href={selectedSpot.accessTime.infoUrl} target="_blank" rel="noopener noreferrer">{selectedSpot.accessTime.infoUrl}<br /></a></div>
+                                        <div>入場料：{selectedSpot.accessFees}</div>
                                     </div>
                                 ) : (
-                                    <p>アクセス制限なし</p>
+                                    <p>アクセス制限なし<br /></p>
                                 )}
                             </div>
                         )}
@@ -332,18 +332,17 @@ export default function MapPage({isAuthenticated }) {
                         </button>
                         {showPhotoInfo && (
                             <div className="optional-section">
-                                <p>推奨撮影条件：{selectedSpot.shootingConditions}</p>
-                                <p>見頃時期：{selectedSpot.peakSeason}</p>
-                                <p>三脚：{selectedSpot.tripodUsage}</p>
+                                <div>推奨撮影条件：{selectedSpot.shootingConditions}</div>
+                                <div>見頃時期：{selectedSpot.peakSeason}</div>
+                                <div>三脚：{selectedSpot.tripodUsage}</div>
 
                                 {selectedSpot.recommendedFocalLength?.length > 0 && (
                                     <div >
-                                        <span >推奨焦点距離：</span>
-                                        <span >
+                                        <div >推奨焦点距離：
                                             {selectedSpot.recommendedFocalLength
                                                 .map(idx => ["超広角", "広角", "標準", "望遠", "超望遠"][idx])
                                                 .join("・")}
-                                        </span>
+                                        </div>
                                     </div>
                                 )}
 
@@ -525,7 +524,7 @@ export default function MapPage({isAuthenticated }) {
                     <button onClick={() => handleFilterClick("hanabi")}>花火</button>
                     <button onClick={() => handleFilterClick("toritetsu")}>撮り鉄</button>
                     <button onClick={() => handleFilterClick("seasonal")}>季節</button>
-                    <button className="special" onClick={() => requireAuth(() => { startAdding(); setIsFilterOpen(false); })}>スポット追加</button>
+                    <button className="special" onClick={() => requireAuth(() => { startAdding(); if (window.innerWidth < 600) { setIsFilterOpen(false); } })}>スポット追加</button>
                     <div className="flyto-container">
                         <input
                             placeholder="町名・都市名"

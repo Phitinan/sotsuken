@@ -54,7 +54,7 @@ export default function useSpotMarkers(mapRef, spots, filter, selectedHanabi, se
       const iconKey = isSelected ? `${spot.type}Red` : spot.type;
 
       el.style.backgroundImage = `url("${markerIcons[iconKey]}")`;
-      el.style.zIndex = isSelected ? "10" : "1";
+      el.style.zIndex = isSelected ? "2" : "1";
     });
   }, [selectedSpot]);
 

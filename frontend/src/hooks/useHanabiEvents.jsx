@@ -38,7 +38,7 @@ export default function useHanabiEvents(mapRef, filter, selectedHanabi, setSelec
         borderRadius: "50%",
         border: selectedHanabi === festival.name ? "2px solid rgba(236, 25, 25, 1)" : "2px solid #a6a6a6ff"
       });
-      const popup = new maplibregl.Popup({ maxWidth: "300px" }).setHTML(`
+      const popup = new maplibregl.Popup({ maxWidth: "300px",  className: "hanabi-popup" }).setHTML(`
   <strong>${festival.name} 打ち上げ場所</strong><br/>
   ${festival.area}<br/>${festival.date}<br/>
   <a href="${festival.link}" target="_blank">詳細</a>

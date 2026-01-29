@@ -1,9 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import maplibregl from "maplibre-gl";
 const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function useRailways(mapRef, filter, setFilter, addingRef, selectedLine, setSelectedLine) {
   const [railData, setRailData] = useState(null);
+  const filterRef = useRef(filter);
+  const selectedLineRef = useRef(selectedLine);
+
+  useEffect(() => {
+    filterRef.current = filter;
+  }, [filter]);
+
+  useEffect(() => {
+    selectedLineRef.current = selectedLine;
+  }, [selectedLine]);
 
   // 1. Fetch Data
   useEffect(() => {
@@ -67,7 +77,9 @@ export default function useRailways(mapRef, filter, setFilter, addingRef, select
           1.5
         ]
       }
+
     });
+    map.setPaintProperty(layerId, "line-opacity", 0.01);
 
     // Interaction: Hover
     map.on('mouseenter', layerId, () => { map.getCanvas().style.cursor = 'pointer'; });
@@ -77,6 +89,8 @@ export default function useRailways(mapRef, filter, setFilter, addingRef, select
     const handleClick = (e) => {
       if (addingRef.current) return;
       if (map.getLayoutProperty(layerId, 'visibility') === 'none') return;
+      const currentFilter = filterRef.current;
+      const currentSelectedLine = selectedLineRef.current;
 
       const bbox = [[e.point.x - 5, e.point.y - 5], [e.point.x + 5, e.point.y + 5]];
       const features = map
@@ -85,12 +99,20 @@ export default function useRailways(mapRef, filter, setFilter, addingRef, select
           const name = f.properties.name || f.properties.line_name;
           if (!name) return false;
 
-          // Allow all clicks in toritetsu mode
-          if (filter === "toritetsu") return true;
+          if (currentFilter === "toritetsu") {
+            console.log("1");
+            return true;
+          }
 
-          // Otherwise only allow selected line
-          return name === selectedLine;
+          if (!currentSelectedLine) {
+            console.log("2");
+            return false;
+          }
+
+          console.log("3");
+          return name === currentSelectedLine;
         });
+
 
       if (!features.length) return;
 
@@ -106,7 +128,7 @@ export default function useRailways(mapRef, filter, setFilter, addingRef, select
       });
       listHtml += '</ul>';
 
-      new maplibregl.Popup({ maxWidth: "300px" })
+      new maplibregl.Popup({ maxWidth: "300px", className: "hanabi-popup"})
         .setLngLat(e.lngLat)
         .setHTML(`<div class="railway-popup-content"><h4 class="railway-popup-title">鉄道</h4>${listHtml}</div>`)
         .addTo(map);
@@ -190,7 +212,7 @@ export default function useRailways(mapRef, filter, setFilter, addingRef, select
       1,
 
       // Otherwise hide non-selected lines
-      0
+      0.01
     ]);
 
   }, [filter, selectedLine]);
